@@ -43,12 +43,11 @@
       cursor: pointer;
     }
 
-    .hidden {
-      display: none;
-    }
-
+    /* Cacher le lecteur au départ avec opacity 0 */
     #spotifyPlayer {
       margin-top: 20px;
+      opacity: 0;
+      transition: opacity 0.5s;
     }
   </style>
 </head>
@@ -71,11 +70,12 @@
   <p id="text"></p>
 
   <!-- Lecteur Spotify -->
-  <div id="spotifyPlayer" class="hidden">
+  <div id="spotifyPlayer">
     <iframe style="border-radius:12px"
             src="https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs"
             width="300" height="80"
-            frameborder="0" allow="encrypted-media">
+            frameborder="0"
+            allow="encrypted-media">
     </iframe>
   </div>
 
@@ -118,8 +118,8 @@
       document.getElementById("lock").classList.add("hidden");
       document.getElementById("poemBox").classList.remove("hidden");
 
-      // Afficher le lecteur Spotify après déverrouillage
-      document.getElementById("spotifyPlayer").classList.remove("hidden");
+      // Faire apparaître le lecteur Spotify
+      document.getElementById("spotifyPlayer").style.opacity = 1;
 
       loadPoem();
     } else {
