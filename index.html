@@ -17,10 +17,15 @@
     overflow-x: hidden;
   }
   .container {
-    max-width: 700px;
-    padding: 25px;
-    text-align: center;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+      max-width: 700px;
+      width: min(90%, 700px);
+      padding: 25px;
+      text-align: center;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
   }
   h2 { font-weight: normal; margin-bottom: 20px; }
   p { white-space: pre-line; line-height: 1.7; font-size: 1.1rem; }
@@ -43,6 +48,11 @@
   /* Page finale */
   #finalPage { display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .typing { display:block; white-space: pre-wrap; text-align:center; font-size:1.2rem; margin-bottom:40px; }
+    /* Layout tweaks to ensure inputs/buttons are centered */
+    .container input{ display:block; margin:12px auto; }
+    .container button{ margin-left:auto; margin-right:auto; }
+    /* Move final typing text up to avoid overlapping the heart */
+    #finalPage .typing{ margin-bottom:90px; }
   .corazonBg {
     width: 120px; height: 120px;
     background:#ee6661;
