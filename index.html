@@ -87,7 +87,10 @@
       const res = await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
       const data = await res.json();
 
+      // Titre automatique : Poème I, II…
       document.getElementById("title").innerText = `Poème ${roman[index-1]}`;
+
+      // Texte du poème
       document.getElementById("text").innerText = data.text;
     } catch (err) {
       document.getElementById("text").innerText = "Erreur lors du chargement du poème.";
