@@ -43,11 +43,8 @@
       cursor: pointer;
     }
 
-    /* Cacher le lecteur au départ avec opacity 0 */
-    #spotifyPlayer {
-      margin-top: 20px;
-      opacity: 0;
-      transition: opacity 0.5s;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -64,19 +61,21 @@
   <p id="error" style="color:#ff8c8c; display:none;">Mauvais mot de passe...</p>
 </div>
 
+<!-- Bloc cadeau -->
+<div class="container hidden" id="gift">
+  <h2>Un petit cadeau pour ton anniversaire 🎁</h2>
+  <button onclick="openGift()">Ouvrir le cadeau</button>
+</div>
+
 <!-- Bloc poème -->
 <div class="container hidden" id="poemBox">
   <h2 id="title"></h2>
   <p id="text"></p>
 
-  <!-- Lecteur Spotify -->
-  <div id="spotifyPlayer">
-    <iframe style="border-radius:12px"
-            src="https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs"
-            width="300" height="80"
-            frameborder="0"
-            allow="encrypted-media">
-    </iframe>
+  <div id="spotifyPlayer" style="margin-top:20px;">
+    <iframe style="border-radius:12px" src="" width="100%" height="80" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            allowfullscreen></iframe>
   </div>
 
   <button onclick="prev()">←</button>
@@ -84,50 +83,69 @@
 </div>
 
 <script>
-  const PASSWORD = "280925";  // mot de passe
-  const TOTAL_POEMS = 23;      // nombre total de poèmes
+  const PASSWORD = "280925";  
+  const TOTAL_POEMS = 23;
 
-  let index = 1;  // poème actuel
-
-  // Tableau pour convertir en chiffres romains I, II, III...
+  let index = 1;
   const roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
                  'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
                  'XXI','XXII','XXIII'];
 
-  // Charger le poème
+  const spotifyTracks = [
+    "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
+    "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
+    "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
+    "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+    "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
+    "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
+    "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
+    "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
+    "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
+    "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
+    "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
+    "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
+    "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
+    "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
+    "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
+    "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
+    "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
+    "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
+    "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
+    "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+    "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
+    "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
+    "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
+  ];
+
   async function loadPoem() {
     try {
       const res = await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
       const data = await res.json();
-
-      // Titre automatique : Poème I, II…
       document.getElementById("title").innerText = `Poème ${roman[index-1]}`;
-
-      // Texte du poème
       document.getElementById("text").innerText = data.text;
+      document.querySelector("#spotifyPlayer iframe").src = spotifyTracks[index-1];
     } catch (err) {
       document.getElementById("text").innerText = "Erreur lors du chargement du poème.";
       console.error(err);
     }
   }
 
-  // Déverrouiller le site
   function unlock() {
     const pass = document.getElementById("password").value;
     if (pass === PASSWORD) {
       document.getElementById("lock").classList.add("hidden");
-      document.getElementById("poemBox").classList.remove("hidden");
-
-      // Faire apparaître le lecteur Spotify
-      document.getElementById("spotifyPlayer").style.opacity = 1;
-
-      loadPoem();
+      document.getElementById("gift").classList.remove("hidden");
     } else {
       document.getElementById("error").style.display = "block";
     }
   }
 
-  // Poème suivant
+  function openGift() {
+    document.getElementById("gift").classList.add("hidden");
+    document.getElementById("poemBox").classList.remove("hidden");
+    loadPoem();
+  }
+
   function next() {
     if (index < TOTAL_POEMS) {
       index++;
@@ -135,7 +153,6 @@
     }
   }
 
-  // Poème précédent
   function prev() {
     if (index > 1) {
       index--;
