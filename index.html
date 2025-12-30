@@ -1,54 +1,90 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pour toi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pour toi</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Georgia', serif;
-      background: #0e0e11;
-      color: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+<style>
+  body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background: #0e0e11;
+    color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
 
-    .container {
-      max-width: 700px;
-      padding: 25px;
-      text-align: center;
-    }
+  .container {
+    max-width: 700px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.5s ease;
+  }
 
-    h2 {
-      font-weight: normal;
-      margin-bottom: 20px;
-    }
+  h2 {
+    font-weight: normal;
+    margin-bottom: 20px;
+  }
 
-    p {
-      white-space: pre-line;
-      line-height: 1.7;
-      font-size: 1.1rem;
-    }
+  p {
+    white-space: pre-line;
+    line-height: 1.7;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
 
-    button {
-      margin: 20px 10px;
-      padding: 12px 26px;
-      background: transparent;
-      border: 1px solid #fff;
-      color: #fff;
-      cursor: pointer;
-    }
+  button {
+    margin: 20px 10px;
+    padding: 12px 26px;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+  }
 
-    .hidden {
-      display: none;
-    }
-  </style>
+  .hidden {
+    display: none;
+  }
+
+  /* Pulse animation */
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  /* Confetti */
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: pink;
+    opacity: 0.7;
+    border-radius: 50%;
+    animation: fall 3s linear forwards;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
+  }
+
+  /* Fade transition */
+  .fade {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .fade.show {
+    opacity: 1;
+  }
+
+</style>
 </head>
-
 <body>
 
 <!-- Bloc mot de passe -->
@@ -62,14 +98,15 @@
 </div>
 
 <!-- Bloc cadeau -->
-<div class="container hidden" id="gift">
+<div class="container hidden fade" id="gift">
   <h2>Un petit cadeau pour ton anniversaire 🎁</h2>
   <button onclick="openGift()">Ouvrir le cadeau</button>
 </div>
 
 <!-- Bloc poème -->
-<div class="container hidden" id="poemBox">
+<div class="container hidden fade" id="poemBox">
   <h2 id="title"></h2>
+  <p id="intro">J’ai écrit ces poèmes juste pour toi…</p>
   <p id="text"></p>
 
   <div id="spotifyPlayer" style="margin-top:20px;">
@@ -82,84 +119,115 @@
   <button onclick="next()">→</button>
 </div>
 
+<!-- Musique de fond douce -->
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
 <script>
-  const PASSWORD = "280925";  
-  const TOTAL_POEMS = 23;
+const PASSWORD = "280925";  
+const TOTAL_POEMS = 23;
+let index = 1;
+const roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
+               'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
+               'XXI','XXII','XXIII'];
 
-  let index = 1;
-  const roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
-                 'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
-                 'XXI','XXII','XXIII'];
+const spotifyTracks = [
+  "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
+  "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
+  "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
+  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+  "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
+  "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
+  "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
+  "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
+  "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
+  "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
+  "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
+  "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
+  "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
+  "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
+  "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
+  "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
+  "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
+  "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
+  "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
+  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+  "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
+  "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
+  "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
+];
 
-  const spotifyTracks = [
-    "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
-    "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
-    "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
-    "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-    "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
-    "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
-    "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
-    "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
-    "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
-    "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
-    "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
-    "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
-    "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
-    "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
-    "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
-    "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
-    "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
-    "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
-    "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
-    "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-    "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
-    "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
-    "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
-  ];
-
-  async function loadPoem() {
-    try {
-      const res = await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
-      const data = await res.json();
-      document.getElementById("title").innerText = `Poème ${roman[index-1]}`;
-      document.getElementById("text").innerText = data.text;
-      document.querySelector("#spotifyPlayer iframe").src = spotifyTracks[index-1];
-    } catch (err) {
-      document.getElementById("text").innerText = "Erreur lors du chargement du poème.";
-      console.error(err);
-    }
+async function loadPoem() {
+  try {
+    const res = await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
+    const data = await res.json();
+    document.getElementById("title").innerText = `Poème ${roman[index-1]}`;
+    document.getElementById("text").innerText = data.text;
+    document.querySelector("#spotifyPlayer iframe").src = spotifyTracks[index-1];
+  } catch (err) {
+    document.getElementById("text").innerText = "Erreur lors du chargement du poème.";
+    console.error(err);
   }
+}
 
-  function unlock() {
-    const pass = document.getElementById("password").value;
-    if (pass === PASSWORD) {
-      document.getElementById("lock").classList.add("hidden");
-      document.getElementById("gift").classList.remove("hidden");
-    } else {
-      document.getElementById("error").style.display = "block";
-    }
+// Confettis animation
+function createConfetti() {
+  for(let i=0;i<100;i++){
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.left = Math.random()*window.innerWidth + 'px';
+    confetti.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
+    document.body.appendChild(confetti);
+    setTimeout(()=>confetti.remove(),3000);
   }
+}
 
-  function openGift() {
-    document.getElementById("gift").classList.add("hidden");
-    document.getElementById("poemBox").classList.remove("hidden");
+// Déverrouiller mot de passe
+function unlock() {
+  const pass = document.getElementById("password").value;
+  if (pass === PASSWORD) {
+    document.getElementById("lock").classList.add("hidden");
+    document.getElementById("gift").classList.remove("hidden");
+    document.getElementById("bgMusic").play(); // musique de fond
+  } else {
+    document.getElementById("error").style.display = "block";
+  }
+}
+
+// Ouvrir le cadeau
+function openGift() {
+  createConfetti();
+  const gift = document.getElementById("gift");
+  const poemBox = document.getElementById("poemBox");
+  gift.classList.remove('show');
+  gift.classList.add('fade');
+  setTimeout(()=>{
+    gift.classList.add("hidden");
+    poemBox.classList.remove("hidden");
+    setTimeout(()=>poemBox.classList.add("show"),50);
     loadPoem();
-  }
+  }, 500);
+}
 
-  function next() {
-    if (index < TOTAL_POEMS) {
-      index++;
-      loadPoem();
-    }
-  }
+function next() {
+  if (index < TOTAL_POEMS) { index++; loadPoem(); }
+}
 
-  function prev() {
-    if (index > 1) {
-      index--;
-      loadPoem();
-    }
-  }
+function prev() {
+  if (index > 1) { index--; loadPoem(); }
+}
+
+// Hover sur le texte pour petits coeurs
+document.getElementById("text").addEventListener("mouseover", e=>{
+  e.target.innerHTML = e.target.innerHTML.replace(/\b(\w+)\b/g, '$1❤️');
+});
+
 </script>
+
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
 
 </body>
 </html>
