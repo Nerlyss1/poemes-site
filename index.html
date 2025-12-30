@@ -10,18 +10,19 @@
       font-family: 'Georgia', serif;
       background: #0e0e11;
       color: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: grid;
+      place-items: center;
       min-height: 100vh;
       overflow-x: hidden;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
     .container {
-      max-width: 700px;
+      width: min(700px, calc(100vw - 32px));
+      max-width: 100%;
       padding: 25px;
-      margin: 0 16px; /* ensure some horizontal padding on small screens */
+      margin: 0 auto; /* center and keep small horizontal gap */
       text-align: center;
+      box-sizing: border-box;
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
     h2 { font-weight: normal; margin-bottom: 20px; }
@@ -43,7 +44,7 @@
     #confettiCanvas { position: fixed; top:0; left:0; pointer-events: none; width:100%; height:100%; z-index:9999; }
     /* Final page typing style */
     #finalPage { display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .typing { color: #fff; white-space: pre-wrap; text-align:center; font-size:1.2rem; line-height:1.6; position:relative; display:block; width:100%; }
+    .typing { color: #fff; white-space: pre-wrap; text-align:center; font-size:1.2rem; line-height:1.6; position:relative; display:inline-block; max-width:100%; box-sizing:border-box; }
     /* blinking caret */
     .typing::after {
       content: '';
