@@ -50,34 +50,8 @@
     z-index:9999;
   }
 
-  /* Cœur final sous le texte */
-  #finalPage { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .corazonBg{
-    /* place the heart as a normal block under the text, centered */
-    position: relative;
-    margin-top: 28px;
-    width: 150px;
-    height: 150px;
-    background: #ee6661;
-    transform: rotate(45deg);
-    z-index: 0;
-    animation: pulseHeart 1.5s infinite;
-  }
-  .corazonBg::before, .corazonBg::after{
-    content: '';
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    border-radius: 50%;
-    background: #ee6661;
-  }
-  .corazonBg::before { top:-50%; left:0; }
-  .corazonBg::after { bottom:0; right:50%; }
-
-  @keyframes pulseHeart {
-    0%,100%{ transform: rotate(45deg) scale(1); }
-    50% { transform: rotate(45deg) scale(1.25); }
-  }
+  /* Final page container centered */
+  #finalPage { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
   /* Texte machine à écrire */
   .typing { 
@@ -118,7 +92,6 @@
 <!-- Page finale -->
 <div class="container hidden" id="finalPage">
   <h2 class="typing" id="finalText"></h2>
-  <div class="corazonBg"></div>
 </div>
 
 <canvas id="confettiCanvas"></canvas>
