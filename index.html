@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pour toi</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      background: #0e0e11;
+      color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 700px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    h2 {
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+
+    p {
+      white-space: pre-line;
+      line-height: 1.7;
+      font-size: 1.1rem;
+    }
+
+    button {
+      margin: 20px 10px;
+      padding: 12px 26px;
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container" id="lock">
+  <h2>Un secret t’attend</h2>
+  <input id="password" type="password" placeholder="Mot de passe"
+         style="padding:12px;width:80%;max-width:260px;">
+  <br><br>
+  <button onclick="unlock()">Entrer</button>
+  <p id="error" style="color:#ff8c8c; display:none;">Mauvais mot…</p>
+</div>
+
+<div class="container hidden" id="poemBox">
+  <h2 id="title"></h2>
+  <p id="text"></p>
+
+  <button onclick="prev()">←</button>
+  <button onclick="next()">→</button>
+</div>
+
+<script>
+  const PASSWORD = "amour";
+  const TOTAL_POEMS = 23;
+
+  let index = 1;
+
+  async function loadPoem() {
+    const res = await fetch(`poems/poem${String(index).padStart(2, '0')}.json`);
+    const data = await res.json();
+
+    document.getElementById("title").innerText = data.title;
+    document.getElementById("text").innerText = data.text;
+  }
+
+  function unlock() {
+    if (document.getElementById("password").value === PASSWORD) {
+      document.getElementById("lock").classList.add("hidden");
+      document.getElementById("poemBox").classList.remove("hidden");
+      loadPoem();
+    } else {
+      document.getElementById("error").style.display = "block";
+    }
+  }
+
+  function next() {
+    if (index < TOTAL_POEMS) {
+      index++;
+      loadPoem();
+    }
+  }
+
+  function prev() {
+    if (index > 1) {
+      index--;
+      loadPoem();
+    }
+  }
+</script>
+
+</body>
+</html>
