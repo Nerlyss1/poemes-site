@@ -50,41 +50,25 @@
     z-index:9999;
   }
 
-  /* Cœur final */
-  .corazonBg{
-    position: fixed;
-    top: 30%;
-    left: 50%;
-    width: 200px;
-    height: 200px;
-    background: #ee6661;
-    transform: rotate(45deg) translate(-50%, -50%);
-    z-index: -3;
-    animation: big 5s linear infinite;
+  /* Petit cœur sous le texte pour la dernière page */
+  .smallHeart {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: #e54a27;
+    transform: rotate(45deg);
+    margin: 20px auto 0 auto;
   }
-  .corazonBg::before, .corazonBg::after{
+  .smallHeart::before, .smallHeart::after {
     content: '';
     width: 100%;
     height: 100%;
     position: absolute;
     border-radius: 50%;
-    background: #ee6661;
+    background: #e54a27;
   }
-  .corazonBg::before { top:-50%; left:0; animation: big1 5s linear infinite; }
-  .corazonBg::after { bottom:0; right:50%; animation: big1 5s linear infinite; }
-
-  @keyframes big1 {
-    33%{ background:#db463a; } 66%{ background:#af2f26; } 99%{ background:#ee6661; }
-  }
-  @keyframes big {
-    0%{ transform: rotate(45deg) scale(0.8); }
-    33%{ transform: rotate(45deg) scale(10); background:#db463a; }
-    35%{ transform: rotate(45deg) scale(1); }
-    66%{ transform: rotate(45deg) scale(10); background:#af2f26; }
-    68%{ transform: rotate(45deg) scale(0.8); }
-    99%{ transform: rotate(45deg) scale(10); background:#ee6661; }
-    100%{ transform: rotate(45deg) scale(1); }
-  }
+  .smallHeart::before { top:-50%; left:0; }
+  .smallHeart::after { bottom:0; right:50%; }
 
   /* Texte machine à écrire */
   .typing { display:inline-block; border-right: 2px solid #fff; white-space: nowrap; overflow: hidden; }
@@ -117,8 +101,8 @@
 
 <!-- Page finale -->
 <div class="container hidden" id="finalPage">
-  <div class="corazonBg"></div>
   <h2 class="typing" id="finalText"></h2>
+  <div class="smallHeart"></div>
 </div>
 
 <canvas id="confettiCanvas"></canvas>
@@ -135,7 +119,32 @@ const roman=['I','II','III','IV','V','VI','VII','VIII','IX','X',
              'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
              'XXI','XXII','XXIII'];
 
-const spotifyLinks=[ /* liens Spotify comme précédemment */ ];
+// Remplacer par tes liens Spotify
+const spotifyLinks=[ 
+  "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
+  "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
+  "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
+  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+  "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
+  "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
+  "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
+  "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
+  "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
+  "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
+  "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
+  "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
+  "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
+  "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
+  "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
+  "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
+  "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
+  "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
+  "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
+  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+  "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
+  "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
+  "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
+];
 
 async function loadPoem(){
   try{
@@ -173,7 +182,7 @@ function openGift(){
     poemBox.classList.remove("hidden");
     setTimeout(()=>poemBox.classList.add("show"),50);
     loadPoem();
-  },2000); // confettis visibles 2s
+  },2000);
 }
 
 function next(){
@@ -190,7 +199,7 @@ function next(){
       finalPage.classList.remove("hidden");
       setTimeout(()=>{
         finalPage.classList.add("show");
-        typeText("J'espère que ça t'a plu, je t'aime");
+        typeText("Emily Dickinson disait :\n« Le bonheur se cache dans les petites choses »");
       },50);
     },500);
   }
