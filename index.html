@@ -3,71 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pour toi</title>
 <style>
+  /* Basic reset + box sizing */
+  :root { box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: inherit; }
+  html, body { width:100%; height:100%; margin:0; padding:0; }
+
+  /* Page background and centering */
   body {
     margin: 0;
-    font-family: 'Georgia', serif;
+    font-family: Georgia, serif;
     background: #0e0e11;
     color: #fff;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     min-height: 100vh;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
+
+  /* Main container: responsive, centered by default */
   .container {
+    width: clamp(280px, 90%, 700px);
     max-width: 700px;
-    width: min(90%, 700px);
-    padding: 20px;
-    box-sizing: border-box;
+    padding: clamp(16px, 4vw, 28px);
+    margin: 0 auto;
     text-align: center;
     transition: opacity 0.5s ease, transform 0.5s ease;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 12px;
   }
-  h2 { font-weight: normal; margin-bottom: 20px; }
-  p { white-space: pre-line; line-height: 1.7; font-size: 1.1rem; }
+
+  h2 { font-weight: 400; margin: 0 0 10px 0; }
+  p { white-space: pre-line; line-height: 1.7; font-size: 1.05rem; margin:0; }
+
+  /* Controls */
   button {
-    margin: 20px 10px;
-    padding: 12px 26px;
+    display: inline-block;
+    margin: 12px auto;
+    padding: 10px 20px;
     background: transparent;
     border: 1px solid #fff;
     color: #fff;
     cursor: pointer;
-    transition: transform 0.5s ease;
+    transition: transform 0.2s ease;
   }
   button.pulse { animation: pulse 1.5s infinite; }
-  @keyframes pulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
-  .hidden { display: none; opacity: 0; transform: scale(0.95); }
+  @keyframes pulse { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.05);} }
+
+  .hidden { display: none; opacity: 0; transform: scale(0.98); }
   .show { opacity: 1; transform: scale(1); }
-  .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:15px; }
-  #confettiCanvas {
-    position: fixed;
-    top:0; left:0;
-    pointer-events: none;
-    width:100%;
-    height:100%;
-    z-index:9999;
-  }
 
-  /* Final page container centered */
-  #finalPage { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  /* Responsive iframe for music */
+  .spotify-iframe { width:100%; height:80px; border-radius:12px; margin-top:12px; }
 
-  /* Texte machine à écrire */
-  .typing { 
-    display:inline-block; 
-    white-space: pre-line; 
-    overflow: hidden; 
-    text-align: center; 
-    line-height: 1.7; 
-    font-size: 1.2rem;
+  /* Confetti canvas covers viewport */
+  #confettiCanvas { position: fixed; inset: 0; pointer-events:none; width:100%; height:100%; z-index:9999; }
+
+  /* Final page centered */
+  #finalPage { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+
+  /* Typing text */
+  .typing { display:block; white-space: pre-line; text-align:center; line-height:1.6; font-size:1.15rem; }
+
+  /* Small screens tweaks */
+  @media (max-width: 480px){
+    .typing { font-size: 1rem; }
+    .spotify-iframe { height:64px; }
+    .container { padding: 16px; }
   }
+</style>
 </style>
 </head>
 <body>
