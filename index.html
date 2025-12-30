@@ -31,6 +31,7 @@
       justify-content: center;
       align-items: center;
     }
+    .nav { display:flex; gap:12px; justify-content:center; margin-top:12px; }
     h2 { font-weight: normal; margin-bottom: 20px; }
     p { white-space: pre-line; line-height: 1.7; font-size: 1.1rem; }
     button {
@@ -86,8 +87,10 @@
   <h2 id="title"></h2>
   <p id="text"></p>
   <div id="music"></div>
-  <button onclick="prev()">←</button>
-  <button onclick="next()">→</button>
+  <div class="nav">
+    <button onclick="prev()">←</button>
+    <button onclick="next()">→</button>
+  </div>
 </div>
 
 <!-- Page finale -->
