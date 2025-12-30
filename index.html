@@ -37,11 +37,23 @@
     @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.1);} }
     .hidden { display: none; opacity: 0; transform: scale(0.95); }
     .show { opacity: 1; transform: scale(1); }
-    .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:15px; }
+    .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:8px; }
     #confettiCanvas { position: fixed; top:0; left:0; pointer-events: none; width:100%; height:100%; z-index:9999; }
     /* Final page typing style */
     #finalPage { display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .typing { color: #fff; white-space: pre-wrap; text-align:center; font-size:1.2rem; line-height:1.6; }
+    .typing { color: #fff; white-space: pre-wrap; text-align:center; font-size:1.2rem; line-height:1.6; position:relative; display:inline-block; }
+    /* blinking caret */
+    .typing::after {
+      content: '';
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: #fff;
+      margin-left: 8px;
+      vertical-align: bottom;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
   </style>
 </head>
 <body>
@@ -79,6 +91,8 @@
 <!-- Sons -->
 <audio id="giftSound" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
 <audio id="giftMusic" src="https://www.soundjay.com/button/sounds/button-3.mp3" loop></audio>
+<!-- Typewriter sound (played per character, requires prior user gesture to allow audio autoplay in some browsers) -->
+<audio id="typeSound" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
 
 <script>
 const PASSWORD = "280925";
@@ -236,10 +250,19 @@ function typeText(text){
   let i = 0;
   el.textContent = '';
   if(typingInterval){ clearInterval(typingInterval); typingInterval = null; }
-  typingInterval = setInterval(()=>{
-    if(i < text.length){ el.textContent += text[i]; i++; }
-    else { clearInterval(typingInterval); typingInterval = null; }
-  }, 60);
+  const typeSound = document.getElementById('typeSound');
+  function typeChar(){
+    if(i < text.length){
+      el.textContent += text[i];
+      if(typeSound){ try{ typeSound.currentTime = 0; typeSound.play(); }catch(e){} }
+      i++;
+      const delay = 40 + Math.random()*60; // 40-100ms random-ish
+      typingInterval = setTimeout(typeChar, delay);
+    } else {
+      typingInterval = null;
+    }
+  }
+  typeChar();
 }
 </script>
 
