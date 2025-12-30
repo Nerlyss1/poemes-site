@@ -51,15 +51,16 @@
   }
 
   /* Cœur final sous le texte */
+  #finalPage { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .corazonBg{
-    position: absolute;
-    top: 80%; /* descendu sous le texte */
-    left: 50%;
+    /* place the heart as a normal block under the text, centered */
+    position: relative;
+    margin-top: 28px;
     width: 150px;
     height: 150px;
     background: #ee6661;
-    transform: rotate(45deg) translate(-50%, -50%);
-    z-index: -1;
+    transform: rotate(45deg);
+    z-index: 0;
     animation: pulseHeart 1.5s infinite;
   }
   .corazonBg::before, .corazonBg::after{
@@ -74,8 +75,8 @@
   .corazonBg::after { bottom:0; right:50%; }
 
   @keyframes pulseHeart {
-    0%,100%{ transform: rotate(45deg) translate(-50%, -50%) scale(1); }
-    50% { transform: rotate(45deg) translate(-50%, -50%) scale(1.4); }
+    0%,100%{ transform: rotate(45deg) scale(1); }
+    50% { transform: rotate(45deg) scale(1.25); }
   }
 
   /* Texte machine à écrire */
