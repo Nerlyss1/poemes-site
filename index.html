@@ -34,30 +34,21 @@
     transition: transform 0.5s ease;
   }
   button.pulse { animation: pulse 1.5s infinite; }
-  @keyframes pulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
   .hidden { display: none; opacity: 0; transform: scale(0.95); }
   .show { opacity: 1; transform: scale(1); }
   .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:15px; }
-  #confettiCanvas {
-    position: fixed;
-    top:0; left:0;
-    pointer-events: none;
-    width:100%;
-    height:100%;
-    z-index:9999;
-  }
+  #confettiCanvas { position: fixed; top:0; left:0; pointer-events: none; width:100%; height:100%; z-index:9999; }
 
-  /* Petit cœur sous le texte pour la dernière page */
+  /* Petit cœur sous le texte de la dernière page */
   .smallHeart {
     position: relative;
     width: 50px;
     height: 50px;
     background: #e54a27;
     transform: rotate(45deg);
-    margin: 20px auto 0 auto;
+    margin: 60px auto 0 auto; /* espace entre texte et cœur */
+    animation: pulseHeart 1s ease-in-out infinite;
   }
   .smallHeart::before, .smallHeart::after {
     content: '';
@@ -70,8 +61,13 @@
   .smallHeart::before { top:-50%; left:0; }
   .smallHeart::after { bottom:0; right:50%; }
 
+  @keyframes pulseHeart {
+    0%,100% { transform: rotate(45deg) scale(1); }
+    50% { transform: rotate(45deg) scale(1.4); }
+  }
+
   /* Texte machine à écrire */
-  .typing { display:inline-block; border-right: 2px solid #fff; white-space: nowrap; overflow: hidden; }
+  .typing { display:inline-block; border-right: 2px solid #fff; white-space: pre-line; overflow: hidden; text-align:center; }
 </style>
 </head>
 <body>
@@ -119,32 +115,8 @@ const roman=['I','II','III','IV','V','VI','VII','VIII','IX','X',
              'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
              'XXI','XXII','XXIII'];
 
-// Remplacer par tes liens Spotify
-const spotifyLinks=[ 
-  "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
-  "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
-  "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
-  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-  "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
-  "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
-  "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
-  "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
-  "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
-  "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
-  "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
-  "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
-  "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
-  "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
-  "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
-  "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
-  "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
-  "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
-  "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
-  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-  "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
-  "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
-  "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
-];
+// À remplir avec vos liens Spotify
+const spotifyLinks=[ /* liens Spotify */ ];
 
 async function loadPoem(){
   try{
@@ -182,7 +154,7 @@ function openGift(){
     poemBox.classList.remove("hidden");
     setTimeout(()=>poemBox.classList.add("show"),50);
     loadPoem();
-  },2000);
+  },2000); // confettis visibles 2s
 }
 
 function next(){
@@ -199,7 +171,7 @@ function next(){
       finalPage.classList.remove("hidden");
       setTimeout(()=>{
         finalPage.classList.add("show");
-        typeText("Emily Dickinson disait :\n« Le bonheur se cache dans les petites choses »");
+        typeText("Comme Emily Dickinson l’aurait écrit :\n« Le bonheur est parfois un petit souffle de poésie »");
       },50);
     },500);
   }
