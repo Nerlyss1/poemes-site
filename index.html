@@ -7,6 +7,8 @@
   /* Basic reset + box sizing */
   :root { box-sizing: border-box; }
   *, *::before, *::after { box-sizing: inherit; }
+
+<div class="page-wrap">
   html, body { width:100%; height:100%; margin:0; padding:0; }
 
   /* Page background and centering */
@@ -74,6 +76,12 @@
     .spotify-iframe { height:64px; }
     .container { padding: 16px; }
   }
+
+  /* Page wrapper to ensure single centered block */
+  .page-wrap{ width:100%; min-height:100vh; display:flex; align-items:center; justify-content:center; }
+
+  /* Nav buttons side-by-side */
+  .nav{ display:flex; gap:8px; align-items:center; justify-content:center; }
 </style>
 </head>
 <body>
@@ -97,14 +105,18 @@
   <h2 id="title"></h2>
   <p id="text"></p>
   <div id="music"></div>
-  <button onclick="prev()">←</button>
-  <button onclick="next()">→</button>
+  <div class="nav">
+    <button onclick="prev()">←</button>
+    <button onclick="next()">→</button>
+  </div>
 </div>
 
 <!-- Page finale -->
 <div class="container hidden" id="finalPage">
   <h2 class="typing" id="finalText"></h2>
 </div>
+
+</div><!-- /.page-wrap -->
 
 <canvas id="confettiCanvas"></canvas>
 
