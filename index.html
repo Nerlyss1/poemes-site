@@ -160,6 +160,9 @@ const spotifyLinks=[
 "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
 ];
 
+let finalShown = false;
+let typingInterval = null;
+
 async function loadPoem(){
   try{
     const res=await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
@@ -200,11 +203,13 @@ function openGift(){
 }
 
 function next(){
+  if(finalShown) return;
   if(index<TOTAL_POEMS){ 
     index++; 
     document.getElementById("changeSound").play();
     loadPoem(); 
   }else{
+    finalShown = true;
     document.getElementById("poemBox").classList.remove("show");
     setTimeout(()=>{
       document.getElementById("poemBox").classList.add("hidden");
@@ -224,6 +229,7 @@ function prev(){
 
 // Flèches clavier
 document.addEventListener('keydown', e=>{
+  if(finalShown) return;
   if(e.key==='ArrowRight'){ next(); }
   if(e.key==='ArrowLeft'){ prev(); }
 });
@@ -274,11 +280,16 @@ function createConfetti(){
 function typeText(text){
   const el=document.getElementById("finalText");
   let i=0;
-  el.innerText="";
-  const interval=setInterval(()=>{
-    el.innerText+=text[i];
-    i++;
-    if(i>=text.length) clearInterval(interval);
+  el.textContent = "";
+  if(typingInterval){ clearInterval(typingInterval); typingInterval = null; }
+  typingInterval = setInterval(()=>{
+    if(i < text.length){
+      el.textContent += text[i];
+      i++;
+    } else {
+      clearInterval(typingInterval);
+      typingInterval = null;
+    }
   },80);
 }
 </script>
