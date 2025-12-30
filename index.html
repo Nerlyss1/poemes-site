@@ -24,6 +24,12 @@
       text-align: center;
       box-sizing: border-box;
       transition: opacity 0.5s ease, transform 0.5s ease;
+      /* center content vertically and horizontally for each page */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     h2 { font-weight: normal; margin-bottom: 20px; }
     p { white-space: pre-line; line-height: 1.7; font-size: 1.1rem; }
@@ -43,7 +49,7 @@
     .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:8px; }
     #confettiCanvas { position: fixed; top:0; left:0; pointer-events: none; width:100%; height:100%; z-index:9999; }
     /* Final page typing style */
-    #finalPage { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; padding-top:8px; padding-bottom:8px; }
+    #finalPage { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:0; margin:0; box-sizing:border-box; }
     .typing { color: #fff; white-space: pre-wrap; text-align:center; font-size:1.2rem; line-height:1.6; position:relative; display:inline-block; max-width:100%; box-sizing:border-box; margin:0; }
     /* blinking caret */
     .typing::after {
