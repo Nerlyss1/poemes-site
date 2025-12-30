@@ -34,44 +34,59 @@
     transition: transform 0.5s ease;
   }
   button.pulse { animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
   .hidden { display: none; opacity: 0; transform: scale(0.95); }
   .show { opacity: 1; transform: scale(1); }
   .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:15px; }
   #confettiCanvas {
-    position: fixed; top:0; left:0;
+    position: fixed;
+    top:0; left:0;
     pointer-events: none;
-    width:100%; height:100%;
+    width:100%;
+    height:100%;
     z-index:9999;
   }
-  /* Cœur final */
-  .corazon {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    background: #e54a27;
-    transform: rotate(45deg);
-    margin: 20px auto 0;
-    animation: pulseHeart 1s ease-in-out infinite;
+
+  /* Cœur final sous le texte */
+  .corazonBg{
+    position: absolute;
+    top: 80%; /* descendu sous le texte */
+    left: 50%;
+    width: 150px;
+    height: 150px;
+    background: #ee6661;
+    transform: rotate(45deg) translate(-50%, -50%);
+    z-index: -1;
+    animation: pulseHeart 1.5s infinite;
   }
-  .corazon::before, .corazon::after {
+  .corazonBg::before, .corazonBg::after{
     content: '';
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     position: absolute;
     border-radius: 50%;
-    background: #e54a27;
+    background: #ee6661;
   }
-  .corazon::before { top:-50%; left:0; }
-  .corazon::after { bottom:0; right:50%; }
+  .corazonBg::before { top:-50%; left:0; }
+  .corazonBg::after { bottom:0; right:50%; }
 
   @keyframes pulseHeart {
-    0%,100% { transform: rotate(45deg) scale(1); }
-    30%,75% { transform: rotate(45deg) scale(1.4); }
-    50% { transform: rotate(45deg) scale(1.2); }
+    0%,100%{ transform: rotate(45deg) translate(-50%, -50%) scale(1); }
+    50% { transform: rotate(45deg) translate(-50%, -50%) scale(1.4); }
   }
 
   /* Texte machine à écrire */
-  .typing { display:inline-block; white-space: pre-line; overflow: hidden; }
+  .typing { 
+    display:inline-block; 
+    white-space: pre-line; 
+    overflow: hidden; 
+    text-align: center; 
+    line-height: 1.7; 
+    font-size: 1.2rem;
+  }
 </style>
 </head>
 <body>
@@ -102,7 +117,7 @@
 <!-- Page finale -->
 <div class="container hidden" id="finalPage">
   <h2 class="typing" id="finalText"></h2>
-  <div class="corazon"></div>
+  <div class="corazonBg"></div>
 </div>
 
 <canvas id="confettiCanvas"></canvas>
@@ -185,10 +200,10 @@ function openGift(){
 }
 
 function next(){
-  if(index<TOTAL_POEMS){
-    index++;
+  if(index<TOTAL_POEMS){ 
+    index++; 
     document.getElementById("changeSound").play();
-    loadPoem();
+    loadPoem(); 
   }else{
     document.getElementById("poemBox").classList.remove("show");
     setTimeout(()=>{
@@ -197,26 +212,20 @@ function next(){
       finalPage.classList.remove("hidden");
       setTimeout(()=>{
         finalPage.classList.add("show");
-        typeText("Comme Emily Dickinson l’aurait écrit :\n« Le bonheur est parfois un petit souffle de poésie »");
+        typeText("Comme Emily Dickinson l’aurait écrit :\n\n« Le bonheur est parfois un petit souffle de poésie »");
       },50);
     },500);
   }
 }
 
 function prev(){
-  if(index>1){
-    index--;
-    document.getElementById("changeSound").play();
-    loadPoem();
-  }
+  if(index>1){ index--; document.getElementById("changeSound").play(); loadPoem(); }
 }
 
-// Flèches du clavier
-document.addEventListener("keydown", (e)=>{
-  if(!document.getElementById("poemBox").classList.contains("hidden")){
-    if(e.key==="ArrowRight"){ next(); }
-    if(e.key==="ArrowLeft"){ prev(); }
-  }
+// Flèches clavier
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'){ next(); }
+  if(e.key==='ArrowLeft'){ prev(); }
 });
 
 // Confettis
