@@ -11,11 +11,13 @@
     background: #0e0e11;
     color: #fff;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     overflow-x: hidden;
   }
+  html, body { height: 100%; }
   .container {
       max-width: 700px;
       width: min(90%, 700px);
@@ -26,6 +28,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      align-self: center;
   }
   h2 { font-weight: normal; margin-bottom: 20px; }
   p { white-space: pre-line; line-height: 1.7; font-size: 1.1rem; }
@@ -50,7 +53,7 @@
   .typing { display:block; white-space: pre-wrap; text-align:center; font-size:1.2rem; margin-bottom:40px; }
     /* Layout tweaks to ensure inputs/buttons are centered */
     .container input{ display:block; margin:12px auto; }
-    .container button{ margin-left:auto; margin-right:auto; }
+    .container button{ margin:12px auto; }
     /* Move final typing text up to avoid overlapping the heart */
     #finalPage .typing{ margin-bottom:90px; }
   .corazonBg {
