@@ -34,50 +34,44 @@
     transition: transform 0.5s ease;
   }
   button.pulse { animation: pulse 1.5s infinite; }
-  @keyframes pulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
   .hidden { display: none; opacity: 0; transform: scale(0.95); }
   .show { opacity: 1; transform: scale(1); }
   .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:15px; }
   #confettiCanvas {
-    position: fixed;
-    top:0; left:0;
+    position: fixed; top:0; left:0;
     pointer-events: none;
-    width:100%;
-    height:100%;
+    width:100%; height:100%;
     z-index:9999;
   }
-
-  /* Petite coeur final */
-  .smallHeart {
+  /* Cœur final */
+  .corazon {
     position: relative;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     background: #e54a27;
     transform: rotate(45deg);
-    animation: heartbeat 1s ease-in-out infinite;
-    margin-bottom: 20px;
+    margin: 20px auto 0;
+    animation: pulseHeart 1s ease-in-out infinite;
   }
-  .smallHeart::before, .smallHeart::after {
+  .corazon::before, .corazon::after {
     content: '';
+    width: 100%; height: 100%;
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: #e54a27;
     border-radius: 50%;
+    background: #e54a27;
   }
-  .smallHeart::before { top:-50%; left:0; }
-  .smallHeart::after { bottom:0; right:50%; }
+  .corazon::before { top:-50%; left:0; }
+  .corazon::after { bottom:0; right:50%; }
 
-  @keyframes heartbeat {
+  @keyframes pulseHeart {
     0%,100% { transform: rotate(45deg) scale(1); }
     30%,75% { transform: rotate(45deg) scale(1.4); }
+    50% { transform: rotate(45deg) scale(1.2); }
   }
 
   /* Texte machine à écrire */
-  .typing { display:inline-block; border-right: 2px solid #fff; white-space: nowrap; overflow: hidden; }
+  .typing { display:inline-block; white-space: pre-line; overflow: hidden; }
 </style>
 </head>
 <body>
@@ -106,9 +100,9 @@
 </div>
 
 <!-- Page finale -->
-<div class="container hidden" id="finalPage" style="display:flex; flex-direction:column; align-items:center;">
-  <h2 class="typing" id="finalText" style="margin-bottom:20px; text-align:center; max-width:80%; line-height:1.5;"></h2>
-  <div class="smallHeart"></div>
+<div class="container hidden" id="finalPage">
+  <h2 class="typing" id="finalText"></h2>
+  <div class="corazon"></div>
 </div>
 
 <canvas id="confettiCanvas"></canvas>
@@ -126,29 +120,29 @@ const roman=['I','II','III','IV','V','VI','VII','VIII','IX','X',
              'XXI','XXII','XXIII'];
 
 const spotifyLinks=[
-  "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
-  "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
-  "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
-  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-  "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
-  "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
-  "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
-  "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
-  "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
-  "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
-  "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
-  "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
-  "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
-  "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
-  "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
-  "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
-  "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
-  "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
-  "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
-  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-  "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
-  "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
-  "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
+"https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
+"https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
+"https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
+"https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+"https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
+"https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
+"https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
+"https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
+"https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
+"https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
+"https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
+"https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
+"https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
+"https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
+"https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
+"https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
+"https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
+"https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
+"https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
+"https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+"https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
+"https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
+"https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
 ];
 
 async function loadPoem(){
@@ -191,12 +185,11 @@ function openGift(){
 }
 
 function next(){
-  if(index<TOTAL_POEMS){ 
-    index++; 
+  if(index<TOTAL_POEMS){
+    index++;
     document.getElementById("changeSound").play();
-    loadPoem(); 
+    loadPoem();
   }else{
-    // dernier poème → page finale
     document.getElementById("poemBox").classList.remove("show");
     setTimeout(()=>{
       document.getElementById("poemBox").classList.add("hidden");
@@ -211,8 +204,20 @@ function next(){
 }
 
 function prev(){
-  if(index>1){ index--; document.getElementById("changeSound").play(); loadPoem(); }
+  if(index>1){
+    index--;
+    document.getElementById("changeSound").play();
+    loadPoem();
+  }
 }
+
+// Flèches du clavier
+document.addEventListener("keydown", (e)=>{
+  if(!document.getElementById("poemBox").classList.contains("hidden")){
+    if(e.key==="ArrowRight"){ next(); }
+    if(e.key==="ArrowLeft"){ prev(); }
+  }
+});
 
 // Confettis
 function createConfetti(){
