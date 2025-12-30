@@ -1,233 +1,219 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pour toi</title>
-
-<style>
-  body {
-    margin: 0;
-    font-family: 'Georgia', serif;
-    background: #0e0e11;
-    color: #f2f2f2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
-  }
-
-  .container {
-    max-width: 700px;
-    padding: 25px;
-    text-align: center;
-    transition: all 0.5s ease;
-  }
-
-  h2 {
-    font-weight: normal;
-    margin-bottom: 20px;
-  }
-
-  p {
-    white-space: pre-line;
-    line-height: 1.7;
-    font-size: 1.1rem;
-    cursor: pointer;
-  }
-
-  button {
-    margin: 20px 10px;
-    padding: 12px 26px;
-    background: transparent;
-    border: 1px solid #fff;
-    color: #fff;
-    cursor: pointer;
-    animation: pulse 2s infinite;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  /* Pulse animation */
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-
-  /* Confetti */
-  .confetti {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: pink;
-    opacity: 0.7;
-    border-radius: 50%;
-    animation: fall 3s linear forwards;
-  }
-
-  @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
-  }
-
-  /* Fade transition */
-  .fade {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-  .fade.show {
-    opacity: 1;
-  }
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pour toi</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      background: #0e0e11;
+      color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 700px;
+      padding: 25px;
+      text-align: center;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    h2 {
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+    p {
+      white-space: pre-line;
+      line-height: 1.7;
+      font-size: 1.1rem;
+    }
+    button {
+      margin: 20px 10px;
+      padding: 12px 26px;
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.5s ease;
+    }
+    button.pulse {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .hidden { display: none; opacity: 0; transform: scale(0.95); }
+    .show { opacity: 1; transform: scale(1); }
+    .spotify-iframe { border-radius:12px; width:100%; height:80px; margin-top:15px; }
+    #confettiCanvas {
+      position: fixed;
+      top:0;
+      left:0;
+      pointer-events: none;
+      width:100%;
+      height:100%;
+      z-index:9999;
+    }
+  </style>
 </head>
 <body>
 
 <!-- Bloc mot de passe -->
 <div class="container" id="lock">
   <h2>Un secret t’attend</h2>
-  <input id="password" type="password" placeholder="Mot de passe"
-         style="padding:12px;width:80%;max-width:260px;">
-  <br><br>
-  <button onclick="unlock()">Entrer</button>
+  <input id="password" type="password" placeholder="Mot de passe" style="padding:12px;width:80%;max-width:260px;"><br><br>
+  <button onclick="unlock()" class="pulse">Entrer</button>
   <p id="error" style="color:#ff8c8c; display:none;">Mauvais mot de passe...</p>
 </div>
 
 <!-- Bloc cadeau -->
-<div class="container hidden fade" id="gift">
+<div class="container hidden" id="gift">
   <h2>Un petit cadeau pour ton anniversaire 🎁</h2>
-  <button onclick="openGift()">Ouvrir le cadeau</button>
+  <button onclick="openGift()" class="pulse">Ouvrir le cadeau</button>
 </div>
 
 <!-- Bloc poème -->
-<div class="container hidden fade" id="poemBox">
+<div class="container hidden" id="poemBox">
   <h2 id="title"></h2>
-  <p id="intro">J’ai écrit ces poèmes juste pour toi…</p>
   <p id="text"></p>
-
-  <div id="spotifyPlayer" style="margin-top:20px;">
-    <iframe style="border-radius:12px" src="" width="100%" height="80" frameborder="0"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            allowfullscreen></iframe>
-  </div>
-
+  <div id="music"></div>
   <button onclick="prev()">←</button>
   <button onclick="next()">→</button>
 </div>
 
-<!-- Musique de fond douce -->
-<audio id="bgMusic" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
+<canvas id="confettiCanvas"></canvas>
+
+<audio id="bgMusic" src="" loop></audio>
 
 <script>
-const PASSWORD = "280925";  
-const TOTAL_POEMS = 23;
-let index = 1;
-const roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
-               'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
-               'XXI','XXII','XXIII'];
+  const PASSWORD = "280925";
+  const TOTAL_POEMS = 23;
+  let index = 1;
 
-const spotifyTracks = [
-  "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
-  "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
-  "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
-  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-  "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
-  "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
-  "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
-  "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
-  "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
-  "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
-  "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
-  "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
-  "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
-  "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
-  "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
-  "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
-  "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
-  "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
-  "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
-  "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
-  "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
-  "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
-  "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
-];
+  const roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
+                 'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
+                 'XXI','XXII','XXIII'];
 
-async function loadPoem() {
-  try {
-    const res = await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
-    const data = await res.json();
-    document.getElementById("title").innerText = `Poème ${roman[index-1]}`;
-    document.getElementById("text").innerText = data.text;
-    document.querySelector("#spotifyPlayer iframe").src = spotifyTracks[index-1];
-  } catch (err) {
-    document.getElementById("text").innerText = "Erreur lors du chargement du poème.";
-    console.error(err);
+  const spotifyLinks = [
+    "https://open.spotify.com/embed/track/35KiiILklye1JRRctaLUb4",
+    "https://open.spotify.com/embed/track/3tJjZMHLqhD8DaGgdBICnc",
+    "https://open.spotify.com/embed/track/5tuhOP6bY3NlwTHghY5MbN",
+    "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+    "https://open.spotify.com/embed/track/6kkwzB6hXLIONkEk9JciA6",
+    "https://open.spotify.com/embed/track/0eBryM7ePQH3Klt3jz8xZd",
+    "https://open.spotify.com/embed/track/1HMQmOWrkieKYWlFsjUP3D",
+    "https://open.spotify.com/embed/track/1m8WpLYXEiNVZchsWEcCSy",
+    "https://open.spotify.com/embed/track/4X6aeSW2bhlbm7YyEstj6Y",
+    "https://open.spotify.com/embed/track/0hNduWmlWmEmuwEFcYvRu1",
+    "https://open.spotify.com/embed/track/22TntnVO3lQNDR5nsvxGRs",
+    "https://open.spotify.com/embed/track/2qPSa6HXjzwa9sLhNGpA1T",
+    "https://open.spotify.com/embed/track/2kfGoV9a5dbSKCNmUWH2ZF",
+    "https://open.spotify.com/embed/track/1s9i7W8zx7Nxx78MUIsvjV",
+    "https://open.spotify.com/embed/track/6BqrPvrPOwpYkdLCgSqtVB",
+    "https://open.spotify.com/embed/track/2XpokHuPmtcgvqicXaxFL2",
+    "https://open.spotify.com/embed/track/5EjtHY6GPESVSqDrqBWWXY",
+    "https://open.spotify.com/embed/track/2IqjKEBiz0CdLKdkXhxw84",
+    "https://open.spotify.com/embed/track/5zT5cMnMKoyruPj13TQXGx",
+    "https://open.spotify.com/embed/track/1BncfTJAWxrsxyT9culBrj",
+    "https://open.spotify.com/embed/track/0rTV5WefWd1J3OwIheTzxM",
+    "https://open.spotify.com/embed/track/1GKrArph1YXfxMH49flYND",
+    "https://open.spotify.com/embed/track/33kKcOJoyNduHwXhEnga8X"
+  ];
+
+  async function loadPoem() {
+    try {
+      const res = await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
+      const data = await res.json();
+      document.getElementById("title").innerText = `Poème ${roman[index-1]}`;
+      document.getElementById("text").innerText = data.text;
+      document.getElementById("music").innerHTML = `<iframe class="spotify-iframe" src="${spotifyLinks[index-1]}" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+    } catch(err){
+      document.getElementById("text").innerText = "Erreur lors du chargement du poème.";
+      console.error(err);
+    }
   }
-}
 
-// Confettis animation
-function createConfetti() {
-  for(let i=0;i<100;i++){
-    const confetti = document.createElement('div');
-    confetti.classList.add('confetti');
-    confetti.style.left = Math.random()*window.innerWidth + 'px';
-    confetti.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 60%)`;
-    document.body.appendChild(confetti);
-    setTimeout(()=>confetti.remove(),3000);
+  function unlock() {
+    const pass = document.getElementById("password").value;
+    if(pass === PASSWORD){
+      document.getElementById("lock").classList.add("hidden");
+      const gift = document.getElementById("gift");
+      gift.classList.remove("hidden");
+      setTimeout(()=>gift.classList.add("show"),50);
+    } else {
+      document.getElementById("error").style.display = "block";
+    }
   }
-}
 
-// Déverrouiller mot de passe
-function unlock() {
-  const pass = document.getElementById("password").value;
-  if (pass === PASSWORD) {
-    document.getElementById("lock").classList.add("hidden");
-    document.getElementById("gift").classList.remove("hidden");
-    document.getElementById("bgMusic").play(); // musique de fond
-  } else {
-    document.getElementById("error").style.display = "block";
+  function openGift() {
+    createConfetti();
+    const gift = document.getElementById("gift");
+    const poemBox = document.getElementById("poemBox");
+    gift.classList.remove("show");
+    setTimeout(()=>{
+      gift.classList.add("hidden");
+      poemBox.classList.remove("hidden");
+      setTimeout(()=>poemBox.classList.add("show"),50);
+      loadPoem();
+    },500);
   }
-}
 
-// Ouvrir le cadeau
-function openGift() {
-  createConfetti();
-  const gift = document.getElementById("gift");
-  const poemBox = document.getElementById("poemBox");
-  gift.classList.remove('show');
-  gift.classList.add('fade');
-  setTimeout(()=>{
-    gift.classList.add("hidden");
-    poemBox.classList.remove("hidden");
-    setTimeout(()=>poemBox.classList.add("show"),50);
-    loadPoem();
-  }, 500);
-}
+  function next() {
+    if(index < TOTAL_POEMS){ index++; loadPoem(); }
+  }
 
-function next() {
-  if (index < TOTAL_POEMS) { index++; loadPoem(); }
-}
+  function prev() {
+    if(index > 1){ index--; loadPoem(); }
+  }
 
-function prev() {
-  if (index > 1) { index--; loadPoem(); }
-}
+  // Confetti simple
+  function createConfetti() {
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-// Hover sur le texte pour petits coeurs
-document.getElementById("text").addEventListener("mouseover", e=>{
-  e.target.innerHTML = e.target.innerHTML.replace(/\b(\w+)\b/g, '$1❤️');
-});
+    const confetti = [];
+    for(let i=0;i<150;i++){
+      confetti.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*6+2,
+        d: Math.random()*50+10,
+        color: `hsl(${Math.random()*360},100%,70%)`,
+        tilt: Math.random()*10-10
+      });
+    }
 
+    let angle=0;
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      confetti.forEach((c,i)=>{
+        ctx.beginPath();
+        ctx.lineWidth=c.r;
+        ctx.strokeStyle=c.color;
+        ctx.moveTo(c.x+c.tilt+c.r/2, c.y);
+        ctx.lineTo(c.x+c.tilt, c.y+c.tilt+c.r/2);
+        ctx.stroke();
+      });
+      update();
+    }
+    function update(){
+      angle+=0.01;
+      confetti.forEach(c=>{
+        c.y += (Math.cos(angle+c.d)+1+c.r/2)/2;
+        c.x += Math.sin(angle);
+        if(c.y>canvas.height) c.y = 0;
+      });
+    }
+    setInterval(draw,30);
+    setTimeout(()=>canvas.remove(),4000);
+  }
 </script>
-
-<audio id="bgMusic" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-
 </body>
 </html>
