@@ -23,6 +23,11 @@
       text-align: center;
     }
 
+    h2 {
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+
     p {
       white-space: pre-line;
       line-height: 1.7;
@@ -58,6 +63,7 @@
 
 <!-- Bloc poème -->
 <div class="container hidden" id="poemBox">
+  <h2 id="title"></h2>
   <p id="text"></p>
 
   <button onclick="prev()">←</button>
@@ -70,13 +76,18 @@
 
   let index = 1;  // poème actuel
 
+  // Tableau pour convertir en chiffres romains I, II, III...
+  const roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
+                 'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX',
+                 'XXI','XXII','XXIII'];
+
   // Charger le poème
   async function loadPoem() {
     try {
       const res = await fetch(`poems/poem${String(index).padStart(2,'0')}.json`);
       const data = await res.json();
 
-      // On affiche uniquement le texte, pas le titre
+      document.getElementById("title").innerText = `Poème ${roman[index-1]}`;
       document.getElementById("text").innerText = data.text;
     } catch (err) {
       document.getElementById("text").innerText = "Erreur lors du chargement du poème.";
